@@ -18,13 +18,13 @@ public class ATM {
 
     // Constructor
     public ATM() {
-        userAuthenticated = false; // user is not authenticated to start
-        currentAccountNumber = 0; // no current account number to start
-        screen = new Screen(); // create screen
-        keypad = new Keypad(); // create keypad
-        cashDispenser = new CashDispenser(); // create cash dispenser
-        depositSlot = new DepositSlot(); // create deposit slot
-        bankDatabase = new BankDatabase(); // create account info database
+        userAuthenticated = false;
+        currentAccountNumber = 0;
+        screen = new Screen();
+        keypad = new Keypad();
+        cashDispenser = new CashDispenser();
+        depositSlot = new DepositSlot();
+        bankDatabase = new BankDatabase();
     }
 
     // Initialization
@@ -46,21 +46,19 @@ public class ATM {
 
     private void authenticateUser() {
         screen.displayMessage("\nPlease enter your account number: ");
-        int accountNumber = keypad.getInput(); // input account number
-        screen.displayMessage("\nEnter your PIN: "); // prompt for PIN
-        int pin = keypad.getInput(); // input PIN
+        int accountNumber = keypad.getInput();
 
-        // set userAuthenticated to boolean value returned by database
+        screen.displayMessage("\nEnter your PIN: ");
+        int pin = keypad.getInput();
+
         userAuthenticated = bankDatabase.authenticateUser(accountNumber, pin);
 
-        // check whether authentication succeeded
         if (userAuthenticated) {
-            currentAccountNumber = accountNumber; // save user's account number
-        } // end if
-        else {
+            currentAccountNumber = accountNumber;
+        } else {
             screen.displayMessageLine("Invalid account number or PIN. Please try again.");
-        } // end else
-    }// end method authenticateUser
+        }
+    }
 
     private void performTransactions() {
         Transaction currentTransaction = null;
@@ -102,10 +100,8 @@ public class ATM {
     }
 
     private Transaction createTransaction(int type) {
-        // temporary Transaction variable
         Transaction transactionType = null;
 
-        // Determine which type of Transaction to create
         switch (type) {
             case BALANCE_INQUIRY:
                 transactionType = new BalanceInquiry(currentAccountNumber, screen, bankDatabase);
