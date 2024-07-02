@@ -1,63 +1,41 @@
 // Account.java
 // Represents a bank account
 
-public class Account 
-{
- private int accountNumber; // account number
- private int pin; // PIN for authentication
- private double availableBalance; // funds available for withdrawal
- private double totalBalance; // funds available + pending deposits 
- 
- // Account constructor initializes attributes
- public Account(int theAccountNumber, int thePIN, double theAvailableBalance, double theTotalBalance)
- {
-     accountNumber = theAccountNumber;
-     pin = thePIN;
-     availableBalance = theAvailableBalance;
-     totalBalance = theTotalBalance;
- }// end Account constructor
+public class Account {
+    private int accountNumber;
+    private int pin;
+    private double availableBalance;
+    private double totalBalance;
 
- // determines whether the user specified PIN matches the PIN of the account
- public boolean validatePIN(int userPIN)
- {
-     if(userPIN == pin)
-     {
-         return true;
-     }
-     else
-     {
-        return false;
-     }
- }// end method validatePIN
+    public Account(int theAccountNumber, int thePIN, double theAvailableBalance, double theTotalBalance) {
+        this.accountNumber = theAccountNumber;
+        this.pin = thePIN;
+        this.availableBalance = theAvailableBalance;
+        this.totalBalance = theTotalBalance;
+    }
 
- // returns available balance
- public double getAvailableBalance()
- {
-     return availableBalance;
- }// end method getAvailableBalance
+    public int getAccountNumber() {
+        return accountNumber;
+    }
 
- // returns total balance
- public double getTotalBalance()
- {
-     return totalBalance;
- }// end methid getTotalBalance
+    public boolean validatePIN(int userPIN) {
+        return pin == userPIN;
+    }
 
- // credits an amount to the account
- public void credit(double amount)
- {
-     totalBalance += amount; // add to total balance
- }// end method credit
+    public double getAvailableBalance() {
+        return availableBalance;
+    }
 
- // debits an amount from the account
- public void debit(double amount)
- {
-     availableBalance -= amount; // subtract from available balance
-     totalBalance -= amount; // subtract from total balance
- }// end method debit
+    public double getTotalBalance() {
+        return totalBalance;
+    }
 
- // returns account number
- public int getAccountNumber()
- {
-     return accountNumber;
- }// end method getAccountNumber
-}// end class Account
+    public void credit(double amount) {
+        totalBalance += amount;
+    }
+
+    public void debit(double amount) {
+        availableBalance -= amount;
+        totalBalance -= amount;
+    }
+}
