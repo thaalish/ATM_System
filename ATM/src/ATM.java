@@ -11,10 +11,10 @@ public class ATM {
     private BankDatabase bankDatabase;
 
     // Menu options
-    private static final int BALANCE_INQUIRY = 1;
-    private static final int WITHDRAWAL = 2;
-    private static final int DEPOSIT = 3;
-    private static final int EXIT = 4;
+    public static final int BALANCE_INQUIRY = 1;
+    public static final int WITHDRAWAL = 2;
+    public static final int DEPOSIT = 3;
+    public static final int EXIT = 4;
 
     // Constructor
     public ATM() {
@@ -24,7 +24,7 @@ public class ATM {
         keypad = new Keypad();
         cashDispenser = new CashDispenser();
         depositSlot = new DepositSlot();
-        bankDatabase = new BankDatabase();
+        bankDatabase = BankDatabase.getInstance();
     }
 
     // Initialization
@@ -46,17 +46,19 @@ public class ATM {
 
     private void authenticateUser() {
         screen.displayMessage("\nPlease enter your account number: ");
-        int accountNumber = keypad.getInput();
+        int accountNumber = keypad.getIntegerInput();
 
         screen.displayMessage("\nEnter your PIN: ");
-        int pin = keypad.getInput();
+        int pin = keypad.getIntegerInput();
 
+        screen.clearScreen();
         userAuthenticated = bankDatabase.authenticateUser(accountNumber, pin);
 
         if (userAuthenticated) {
             currentAccountNumber = accountNumber;
         } else {
             screen.displayMessageLine("Invalid account number or PIN. Please try again.");
+            screen.displayMessageLine("================================================");
         }
     }
 
@@ -67,24 +69,18 @@ public class ATM {
         while (!userExited) {
             int mainMenuSelection = displayMainMenu();
 
-            switch (mainMenuSelection) {
-                case BALANCE_INQUIRY:
-
-                case WITHDRAWAL:
-
-                case DEPOSIT:
-                    currentTransaction = createTransaction(mainMenuSelection);
+            if (mainMenuSelection == EXIT) {
+                screen.clearScreen();
+                screen.displayMessageLine("\nExiting the system...");
+                userExited = true;
+            } else {
+                try {
+                    currentTransaction = TransactionFactory.createTransaction(mainMenuSelection, currentAccountNumber,
+                            screen, bankDatabase, keypad, cashDispenser, depositSlot);
                     currentTransaction.execute();
-                    break;
-
-                case EXIT:
-                    screen.displayMessageLine("\nExiting the system...");
-                    userExited = true;
-                    break;
-
-                default:
+                } catch (IllegalArgumentException e) {
                     screen.displayMessageLine("\nYou did not enter a valid selection. Try again.");
-                    break;
+                }
             }
         }
     }
@@ -96,26 +92,6 @@ public class ATM {
         screen.displayMessageLine("3 - Deposit funds");
         screen.displayMessageLine("4 - Exit\n");
 
-        return keypad.getInput();
-    }
-
-    private Transaction createTransaction(int type) {
-        Transaction transactionType = null;
-
-        switch (type) {
-            case BALANCE_INQUIRY:
-                transactionType = new BalanceInquiry(currentAccountNumber, screen, bankDatabase);
-                break;
-
-            case WITHDRAWAL:
-                transactionType = new Withdrawal(currentAccountNumber, screen,
-                        bankDatabase, keypad, cashDispenser);
-
-            case DEPOSIT:
-                transactionType = new Deposit(currentAccountNumber, screen,
-                        bankDatabase, keypad, depositSlot);
-        }
-
-        return transactionType;
+        return keypad.getIntegerInput();
     }
 }

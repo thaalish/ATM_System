@@ -1,33 +1,34 @@
 // Transaction.java
-// Abstract superclass Transaction represents an ATM transaction
+// This abstract class represents a transaction in an ATM system, providing common attributes and methods for transactions.
 
 public abstract class Transaction {
-    private int accountNumber; // indicates the account involved
-    private Screen screen; // ATM's screen
-    private BankDatabase bankDatabase; // account info database
+    protected int accountNumber;
+    protected Screen screen;
+    protected BankDatabase bankDatabase; 
 
-    // Transaction constructor invoked by subclasses using super()
-    public Transaction(int userAccountNumber, Screen atmScreen, BankDatabase atmBankDatabase) {
-        accountNumber = userAccountNumber;
-        screen = atmScreen;
-        bankDatabase = atmBankDatabase;
-    }// end Transaction constructor
+    public Transaction(int accountNumber, Screen atmScreen, BankDatabase bankDatabase) {
+        this.accountNumber = accountNumber;
+        this.screen = atmScreen;
+        this.bankDatabase = bankDatabase;
+    }
 
-    // return account number
-    public int getAccountNumber() {
-        return accountNumber;
-    }// end method getAccountNumber
+    // Abstract method to be implemented by subclasses for executing specific
+    // transaction logic
+    public abstract void execute();
 
-    // return reference to screen
-    public Screen getScreen() {
-        return screen;
-    }// end method getScreen
+    // Method to get the account associated with the transaction
+    protected Account getAccount() {
+        Account account = bankDatabase.getAccount(accountNumber);
+        if (account == null) {
+            screen.displayMessageLine("Account not found.");
+        }
+        return account;
+    }
 
-    // return reference to bank database
-    public BankDatabase getBankDatabase() {
-        return bankDatabase;
-    }// end method getBankDatabase
-
-    // perform the transaction (overrriden by each subclass)
-    abstract public void execute();
-}// end class Transaction
+    // Method to handle errors during transaction execution
+    protected void handleErrors(String errorMessage) {
+        // Log error for security purposes
+        System.err.println("Error: " + errorMessage);
+        screen.displayMessageLine(errorMessage);
+    }
+}

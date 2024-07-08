@@ -1,31 +1,48 @@
-// BalanceInquiry.java 
-// Represents a balance inquiry ATM transaction
+// BalanceInquiry.java
+// This class handles the balance inquiry transaction, allowing users to check their available and total balances.
 
 public class BalanceInquiry extends Transaction {
-    // BalanceInquiry constructor
-    public BalanceInquiry(int userAccountNumber, Screen atmScreen, BankDatabase atmBankDatabase) {
-        super(userAccountNumber, atmScreen, atmBankDatabase);
-    }// end BalanceInquiry constructor
+    private Keypad keypad;
 
-    // perform the transaction
+    private static final int BACK_TO_MENU = 0;
+
+    public BalanceInquiry(int accountNumber, Screen screen, BankDatabase bankDatabase, Keypad keypad) {
+        super(accountNumber, screen, bankDatabase);
+        this.keypad = keypad;
+    }
+
     @Override
     public void execute() {
-        // get references to bank database and screen
-        BankDatabase bankDatabase = getBankDatabase();
-        Screen screen = getScreen();
+        // Retrieve available and total balances from the bank database
+        double availableBalance = bankDatabase.getAvailableBalance(accountNumber);
+        double totalBalance = bankDatabase.getTotalBalance(accountNumber);
+        boolean backToMenu = false;
 
-        // get available balance for the account involved
-        double availableBalance = bankDatabase.getAvailableBalance(getAccountNumber());
+        // Clear the screen before displaying information
+        screen.clearScreen();
+        while (!backToMenu) {
+            screen.displayMessageLine("\nBalance Information:");
+            screen.displayMessage(" - Available balance: ");
+            screen.displayMessageLine(String.valueOf(availableBalance));
+            screen.displayMessage(" - Total balance: ");
+            screen.displayMessageLine(String.valueOf(totalBalance));
 
-        // get total balance for the account involved
-        double totalBalance = bankDatabase.getTotalBalance(getAccountNumber());
+            screen.displayMessageLine("\nMenu options:");
+            screen.displayMessageLine("0 - Cancel transaction");
+            screen.displayMessage("Choose an option: ");
 
-        // display the balance information on the screen
-        screen.displayMessageLine("\nBalanceInformation:");
-        screen.displayMessage(" - Available Balance: ");
-        screen.displayDollarAmount(availableBalance);
-        screen.displayMessageLine("\nTotal Balance: ");
-        screen.displayDollarAmount(totalBalance);
-        screen.displayMessageLine("");
-    }// end method execute
-}// end class BalanceInquiry
+            int selection = keypad.getIntegerInput();
+
+            screen.clearScreen();
+            // Check if the user wants to go back to the main menu
+            if (selection == BACK_TO_MENU) {
+                backToMenu = true;
+                return;
+            } else {
+                // Handle invalid menu selection
+                screen.displayMessageLine("Invalid selection. Please try again.");
+                screen.displayMessageLine("================================================================");
+            }
+        }
+    }
+}

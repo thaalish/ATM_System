@@ -1,16 +1,23 @@
 // BankDatabase.java
-// Represents the bank account information database
+// This class simulates a bank database using a singleton pattern to manage accounts and their transactions securely.
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BankDatabase {
     private static BankDatabase singletonInstance;
-    private Account[] accounts;
+    private Map<Integer, Account> accounts;
 
-    public BankDatabase() {
-        accounts = new Account[2]; // 2 accounts for testing
-        accounts[0] = new Account(12345, 54321, 1000.0, 1200.0);
-        accounts[1] = new Account(98765, 56789, 200.0, 200.0);
+    private BankDatabase() {
+        accounts = new HashMap<>();
+
+        // Adding some test accounts to the database with initial balances
+        // Key will be the account number
+        accounts.put(12345, new Account(12345, 54321, 1000.0, 1200.0));
+        accounts.put(98765, new Account(98765, 56789, 200.0, 200.0));
     }
 
+    // Method to get the singleton instance of the BankDatabase
     public static synchronized BankDatabase getInstance() {
         if (singletonInstance == null) {
             singletonInstance = new BankDatabase();
@@ -18,34 +25,37 @@ public class BankDatabase {
         return singletonInstance;
     }
 
-    public boolean authenticateUser(int userAccountNumber, int userPIN) {
-        Account userAccount = getAccount(userAccountNumber);
-        return userAccount != null && userAccount.validatePIN(userPIN);
+    public boolean authenticateUser(int accountNumber, int pin) {
+        Account account = accounts.get(accountNumber);
+        return account != null && account.validatePIN(pin);
     }
 
-    public double getAvailableBalance(int userAccountNumber) {
-        return getAccount(userAccountNumber).getAvailableBalance();
+    public synchronized double getAvailableBalance(int accountNumber) {
+        Account account = accounts.get(accountNumber);
+        return account != null ? account.getAvailableBalance() : 0;
     }
 
-    public double getTotalBalance(int userAccountNumber) {
-        return getAccount(userAccountNumber).getTotalBalance();
+    public synchronized double getTotalBalance(int accountNumber) {
+        Account account = accounts.get(accountNumber);
+        return account != null ? account.getTotalBalance() : 0;
     }
 
-    public void credit(int userAccountNumber, double amount) {
-        getAccount(userAccountNumber).credit(amount);
-    }
-
-    public void debit(int userAccountNumber, double amount) {
-        getAccount(userAccountNumber).debit(amount);
-    }
-
-    private Account getAccount(int accountNumber) {
-        for (Account account : accounts) {
-            if (account.getAccountNumber() == accountNumber) {
-                return account;
-            }
+    public synchronized void creditAccount(int accountNumber, double amount) {
+        Account account = accounts.get(accountNumber);
+        if (account != null) {
+            account.credit(amount);
         }
+    }
 
-        return null;
+    public synchronized void debitAccount(int accountNumber, double amount) {
+        Account account = accounts.get(accountNumber);
+        if (account != null) {
+            account.debit(amount);
+        }
+    }
+
+    // Provide controlled access to account object securely
+    protected synchronized Account getAccount(int accountNumber) {
+        return accounts.get(accountNumber);
     }
 }

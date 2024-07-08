@@ -1,11 +1,9 @@
-// DepositSlot.java 
-// Represents the deposit slot of the ATM
+// DepositSlot.java
+// This class represents a simulated deposit slot used in ATM software, always returning true to simulate envelope reception.
 
 public class DepositSlot {
-    // indicates whether the envelope was received
-    // (always returns true, because this is only a software simulation of a real
-    // deposit slot)
+    // Method to simulate whether the envelope was received (always returns true)
     public boolean isEnvelopeReceived() {
         return true;
-    }// end method isEnvelopeReceived
-}// end class DepositSlot
+    }
+}

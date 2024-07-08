@@ -1,31 +1,32 @@
 // CashDispenser.java
-// Represents the cash dispenser of the ATM
+// This class simulates a cash dispenser used in ATMs, managing the dispensing of cash and maintaining the count of available bills.
 
 public class CashDispenser {
-    // the default initial number of bills in the cash dispenser
-    private final static int INITIAL_COUNT = 500;
-    private int count; // number of $20 bills remaining
+    // Initial number of $20 bills in the dispenser
+    private static final int INITIAL_COUNT = 500;
 
-    // no-argument CashDispenser constructor initializes count to default
+    // Number of $20 bills remaining in the dispenser
+    private int count;
+
     public CashDispenser() {
-        count = INITIAL_COUNT; // set count attribute to default
-    }// end CashDispenser constructor
+        count = INITIAL_COUNT;
+    }
 
-    // simulates dispensing of specified amount of cash
-    public void dispenseCash(int amount) {
-        int billsRequired = amount / 20; // number of $20 bills required
+    public void dispenseCash(double amount) {
+        int billsRequired = (int) (amount / 20); // Number of $20 bills required
+        count -= billsRequired;
+    }
 
-        count -= billsRequired; // update count attribute (bills)
-    }// end method dispenseCash
+    public boolean isSufficientCashAvailable(double amount) {
+        int billsRequired = (int) (amount / 20); // Number of $20 bills required
+        return count >= billsRequired;
+    }
 
-    // indicates whether cash dispenser can dispense desired amount
-    public boolean isSufficientCashAvailable(int amount) {
-        int billsRequired = amount / 20; // number of $20 bills required
+    public int getCount() {
+        return count;
+    }
 
-        if (count >= billsRequired) {
-            return true; // enough bills available
-        } else {
-            return false; // not enough bills available
-        }
-    }// end method isSufficientCashAvailable
-}// end class CashDispenser
+    public void refill(int billCount) {
+        count += billCount;
+    }
+}
